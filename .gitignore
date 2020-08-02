@@ -1,7 +1,6 @@
 node_modules
 npm-debug.log
-build
-dist
+statr
 statr.zip
 old
-dist.*
+statr.*

@@ -7,12 +7,14 @@ const gulp       = require('gulp'),
       shell      = require('gulp-shell'),
       zip        = require('gulp-zip');
 
+const dirName = 'statr';
+
 gulp.task('scripts:dev', () => {
   return browserify('src/scripts/main.js')
     .transform(babelify, {presets: ['es2015']})
     .bundle()
     .pipe(source('content.js'))
-    .pipe(gulp.dest('dist/scripts'));
+    .pipe(gulp.dest(dirName+'/scripts'));
 });
 
 gulp.task('scripts:prod', () => {
@@ -21,17 +23,17 @@ gulp.task('scripts:prod', () => {
     .bundle()
     .pipe(source('content.js'))
     .pipe(streamify(uglify()))
-    .pipe(gulp.dest('dist/scripts'));
+    .pipe(gulp.dest(dirName+'/scripts'));
 });
 
 gulp.task('prep', shell.task([
-  'rm -rf dist',
-  'mkdir dist',
-  'cp misc/manifest.json dist',
-  'cp -R src/www dist/app/',
+  'rm -rf '+dirName,
+  'mkdir '+dirName,
+  'cp misc/manifest.json '+dirName,
+  'cp -R src/www '+dirName+'/app/',
   'mkdir cpa',
   'cp assets/* cpa',
-  'mv cpa dist/assets'
+  'mv cpa '+dirName+'/assets'
 ]));
 
 gulp.task('js:prod', ['prep'], shell.task([
@@ -59,7 +61,7 @@ gulp.task('final:prod', ['prod','js:prod', 'scripts:prod']);
 gulp.task('final:dev', ['js:dev', 'scripts:dev']);
 
 gulp.task('release', ['final:prod'], () => {
-  gulp.src('dist/**/*')
+  gulp.src(dirName+'/**/*')
     .pipe(zip('statr.zip'))
     .pipe(gulp.dest('.'));
 });

@@ -4,7 +4,8 @@
   "description": "Display more comprehensive ESPN Fantasy Baseball stats with a chrome extension.",
   "main": "index.js",
   "scripts": {
-    "build": "gulp"
+    "build": "gulp",
+    "release": "gulp release"
   },
   "repository": {
     "type": "git",

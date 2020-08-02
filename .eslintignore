@@ -1,5 +1,4 @@
 **/node_modules/
-**/build/
 lib
 webpack.config.js
 gulpfile.js

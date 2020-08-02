@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { Tab, Tabs, TabPanel } from '@material-ui/core';
-import tabTheme from './tab.sass';
+import { Tab, Tabs as RawTabs, TabPanel } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
 /**
  * Modules
  */
@@ -13,6 +14,18 @@ import BrowserTab from '../lib/tab';
 import Teams from '../components/teams';
 import Error from '../components/error';
 
+const Tabs = withStyles({
+  indicator: {
+    backgroundColor: '#004660',
+  }
+})(RawTabs);
+
+const Loading = function() {
+  return (
+    <h2>Loading...</h2>
+  )
+}
+
 /**
  * Container definition
  */
@@ -21,7 +34,7 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this._timer = false;
-    this._live = false;
+    this._live = true;
   }
 
   state = {
@@ -49,24 +62,14 @@ export default class Home extends Component {
   }
 
   navigate = (ev, tab) => {
-    console.log(tab)
     this.setState({tab});
   }
 
   _catcher = (payload) => {
     switch (payload.code) {
-      case 'CONTENTSCRIPT_ACTIVE':
-        this.setState({
-          script_active: true
-        }, this.getTeams);
-      break;
-      case 'INVALID_PAGE':
-        this.setState({
-          invalid_page: true
-        });
-      break;
-      default:
-      break;
+      case 'CONTENTSCRIPT_ACTIVE': this.setState({script_active: true}, this.getTeams); break;
+      case 'INVALID_PAGE': this.setState({invalid_page: true}); break;
+      default: break;
     }
   }
 
@@ -75,15 +78,16 @@ export default class Home extends Component {
   }
 
   render = () => {
+    if (!this.state.script_active) {
+      return <Loading />;
+    }
     if (this.state.invalid_page) {
       return <Error />;
     }
     return (
       <Fragment>
-        <Tabs value={this.state.tab} onChange={this.navigate}>
-          <Tab label='Standings' />
-        </Tabs>
-        <div>{this.state.script_active && this.state.tab == 0 ? <Teams /> : <p>ih</p>}</div>
+        <Tabs value={this.state.tab} onChange={this.navigate}><Tab label='Standings' /></Tabs>
+        <div>{this.state.tab == 0 ? <Teams /> : null}</div>
       </Fragment>
     );
   }

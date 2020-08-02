@@ -8,7 +8,7 @@ class Tab {
     });
   }
   msg = (payload) => {
-    chrome.tabs.sendMessage(this.id, payload, console.log);
+    chrome.tabs.sendMessage(this.id, payload);
   }
 }
 

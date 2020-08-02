@@ -18,6 +18,7 @@ const columns = {
   'owner': 'Owner',
   'woba': 'wOBA',
   'bat_total': 'bPTS',
+  'pit_total': 'pPTS',
   'pts_per_pa': 'bPTS/PA',
   'pts_per_ip': 'pPTS/IP',
   'actual_total': 'Adjusted'
@@ -49,7 +50,7 @@ export default class Teams extends Component {
   catcher = (message) => {
     switch (message.code) {
       case 'TEAMS':
-        if (message.view != 'daily') {
+        if (message.view == 'realtime') {
           this.updateTeams(message.teams);
         } else {
           this.setState({wrongTab: true});
@@ -98,6 +99,7 @@ export default class Teams extends Component {
       <TableCell>{team.owner}</TableCell>
       <TableCell>{team.woba}</TableCell>
       <TableCell>{team.bat_total}</TableCell>
+      <TableCell>{team.pit_total}</TableCell>
       <TableCell>{team.pts_per_pa}</TableCell>
       <TableCell>{team.pts_per_ip}</TableCell>
       <TableCell>{team.actual_total}</TableCell>
@@ -132,8 +134,6 @@ export default class Teams extends Component {
         <h4>Loading teams...</h4>
       );
     }
-
-    console.log(FontIconTheme);
 
     const sort = this.state.sort;
     const teams = sortArrayByKey(this.state.teams, sort.col, sort.dir);

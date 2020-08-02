@@ -2,7 +2,7 @@
 
 import jQuery from 'jquery';
 
-let debugging = true;
+let debugging = false;
 
 const log = {
   debug: function() {
@@ -101,7 +101,7 @@ const sendTeams = () => {
 
 if (!window._x_statr_active) {
   chrome.runtime.onMessage.addListener((message) => {
-    console.info(message);
+    log.debug(message);
     switch (message.code) {
       case 'GET_TEAMS':
         sendTeams();

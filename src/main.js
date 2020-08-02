@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tab.url.indexOf('fantasy.espn.com/baseball/league/standings') !== -1) {
       chrome.tabs.executeScript(tab.id, {file: 'scripts/content.js'});
     } else {
-      console.log('dispatching code...');
       Dispatcher.dispatch({
         code: 'INVALID_PAGE'
       });

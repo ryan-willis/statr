@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Tab, Tabs as RawTabs, TabPanel } from '@material-ui/core';
+import { Tab, Tabs as RawTabs } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 /**
@@ -16,22 +16,18 @@ import Error from '../components/error';
 
 const Tabs = withStyles({
   indicator: {
-    backgroundColor: '#004660',
+    backgroundColor: '#004660'
   }
 })(RawTabs);
 
-const Loading = function() {
-  return (
-    <h2>Loading...</h2>
-  )
-}
+const Loading = () => (<h2>Loading...</h2>);
 
 /**
  * Container definition
  */
 export default class Home extends Component {
 
-  constructor(props) {
+  constructor (props) {
     super(props);
     this._timer = false;
     this._live = true;
@@ -49,14 +45,14 @@ export default class Home extends Component {
 
   componentWillUnmount = () => {
     Dispatcher.unregister(this._catch);
-    if (this._live && this._timer != false) {
+    if (this._live && this._timer !== false) {
       clearInterval(this._timer);
     }
   }
 
   getTeams = () => {
-    BrowserTab.msg({code: 'GET_TEAMS'})
-    if (this._live && this._timer == false) {
+    BrowserTab.msg({code: 'GET_TEAMS'});
+    if (this._live && this._timer === false) {
       this._timer = setInterval(this.getTeams, 1000);
     }
   }
@@ -87,7 +83,7 @@ export default class Home extends Component {
     return (
       <Fragment>
         <Tabs value={this.state.tab} onChange={this.navigate}><Tab label='Standings' /></Tabs>
-        <div>{this.state.tab == 0 ? <Teams /> : null}</div>
+        <div>{this.state.tab === 0 ? <Teams /> : null}</div>
       </Fragment>
     );
   }

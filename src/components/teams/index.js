@@ -50,7 +50,7 @@ export default class Teams extends Component {
   catcher = (message) => {
     switch (message.code) {
       case 'TEAMS':
-        if (message.view == 'realtime') {
+        if (message.view === 'realtime') {
           this.updateTeams(message.teams);
         } else {
           this.setState({wrongTab: true});

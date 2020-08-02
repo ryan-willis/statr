@@ -2,13 +2,13 @@
 
 import jQuery from 'jquery';
 
-let debugging = false;
+const debugging = false;
 
 const log = {
-  debug: function() {
+  debug: () => {
     if (debugging) console.log.apply(null, arguments);
   },
-  info: function() {
+  info: () => {
     console.log.apply(null, arguments);
   }
 };
@@ -20,8 +20,8 @@ const getTeams = () => {
   let isPitchingField = false;
 
   const seasonPointsTable = jQuery('div.season--points--table > section > div > div > div > table');
-  const seasonStatsTable  = jQuery('div.season--stats--table > section > div > div > div > table');
-  const ownerTable        = jQuery('div.season--stats--table > section > div > table:nth-child(1)');
+  const seasonStatsTable = jQuery('div.season--stats--table > section > div > div > div > table');
+  const ownerTable = jQuery('div.season--stats--table > section > div > table:nth-child(1)');
 
   const batterFieldsCount = seasonPointsTable.find('colgroup:nth-child(1)')[0].getAttribute('span');
   const pitcherFieldsCount = seasonPointsTable.find('colgroup:nth-child(2)')[0].getAttribute('span');
@@ -29,7 +29,7 @@ const getTeams = () => {
   log.debug('pitcherFieldsCount', pitcherFieldsCount);
 
   seasonPointsTable.find('thead tr th span').each((i, el) => {
-    if (i == batterFieldsCount) {
+    if (i === batterFieldsCount) {
       isPitchingField = true;
     }
     if (isPitchingField) {

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Tab, Tabs } from 'react-toolbox';
+import React, { Component, Fragment } from 'react';
+import { Tab, Tabs, TabPanel } from '@material-ui/core';
 import tabTheme from './tab.sass';
 /**
  * Modules
@@ -13,11 +13,16 @@ import BrowserTab from '../lib/tab';
 import Teams from '../components/teams';
 import Error from '../components/error';
 
-
 /**
  * Container definition
  */
 export default class Home extends Component {
+
+  constructor(props) {
+    super(props);
+    this._timer = false;
+    this._live = false;
+  }
 
   state = {
     script_active: false,
@@ -31,9 +36,20 @@ export default class Home extends Component {
 
   componentWillUnmount = () => {
     Dispatcher.unregister(this._catch);
+    if (this._live && this._timer != false) {
+      clearInterval(this._timer);
+    }
   }
 
-  navigate = (tab) => {
+  getTeams = () => {
+    BrowserTab.msg({code: 'GET_TEAMS'})
+    if (this._live && this._timer == false) {
+      this._timer = setInterval(this.getTeams, 1000);
+    }
+  }
+
+  navigate = (ev, tab) => {
+    console.log(tab)
     this.setState({tab});
   }
 
@@ -42,7 +58,7 @@ export default class Home extends Component {
       case 'CONTENTSCRIPT_ACTIVE':
         this.setState({
           script_active: true
-        }, BrowserTab.msg({code: 'GET_TEAMS'}));
+        }, this.getTeams);
       break;
       case 'INVALID_PAGE':
         this.setState({
@@ -63,11 +79,12 @@ export default class Home extends Component {
       return <Error />;
     }
     return (
-      <Tabs index={this.state.tab} onChange={this.navigate}>
-        <Tab label='Standings' theme={tabTheme}>
-          {this.state.script_active ? <Teams /> : <p>ih</p>}
-        </Tab>
-      </Tabs>
+      <Fragment>
+        <Tabs value={this.state.tab} onChange={this.navigate}>
+          <Tab label='Standings' />
+        </Tabs>
+        <div>{this.state.script_active && this.state.tab == 0 ? <Teams /> : <p>ih</p>}</div>
+      </Fragment>
     );
   }
 }

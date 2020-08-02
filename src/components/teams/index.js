@@ -26,6 +26,7 @@ const columns = {
 export default class Teams extends Component {
   state = {
     ready: false,
+    wrongTab: false,
     sort: {
       col: 'actual_total',
       dir: false
@@ -41,10 +42,18 @@ export default class Teams extends Component {
     Dispatcher.unregister(this._catch);
   }
 
+  notifyTabChange = () => {
+
+  }
+
   catcher = (message) => {
     switch (message.code) {
       case 'TEAMS':
-        this.updateTeams(message.teams);
+        if (message.view != 'daily') {
+          this.updateTeams(message.teams);
+        } else {
+          this.setState({wrongTab: true});
+        }
       break;
       default:
       break;
@@ -80,7 +89,7 @@ export default class Teams extends Component {
       };
     });
     Tab.msg({code: 'LOG', teams});
-    this.setState({ ready, teams });
+    this.setState({ ready, teams, wrongTab: false });
   }
 
   teamRow = (team, idx) => (
@@ -113,6 +122,11 @@ export default class Teams extends Component {
   }
 
   render = () => {
+    if (this.state.wrongTab) {
+      return (
+        <h4>Select the <b>Real-Time (Season Stats)</b> tab from the slider below <b>Standings</b> to proceed.</h4>
+      );
+    }
     if (!this.state.ready) {
       return (
         <h4>Loading teams...</h4>

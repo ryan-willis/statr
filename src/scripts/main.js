@@ -2,24 +2,45 @@
 
 import jQuery from 'jquery';
 
+let debugging = true;
+
+const log = {
+  debug: function() {
+    if (debugging) console.log.apply(null, arguments);
+  },
+  info: function() {
+    console.log.apply(null, arguments);
+  }
+};
+
 const getTeams = () => {
   const batterFields = [];
   const pitcherFields = [];
 
-  let pitchingNow = false;
+  let isPitchingField = false;
 
-  jQuery('#standingsTable >tbody > tr:nth-child(3) > td').each((i, el) => {
-    if (i === 0) return; // skip first spacer
-    if (el.className.indexOf('sectionLeadingSpacer') !== -1) {
-      pitchingNow = true;
-      return;
+  const seasonPointsTable = jQuery('div.season--points--table > section > div > div > div > table');
+  const seasonStatsTable  = jQuery('div.season--stats--table > section > div > div > div > table');
+  const ownerTable        = jQuery('div.season--stats--table > section > div > table:nth-child(1)');
+
+  const batterFieldsCount = seasonPointsTable.find('colgroup:nth-child(1)')[0].getAttribute('span');
+  const pitcherFieldsCount = seasonPointsTable.find('colgroup:nth-child(2)')[0].getAttribute('span');
+  log.debug('batterFieldsCount', batterFieldsCount);
+  log.debug('pitcherFieldsCount', pitcherFieldsCount);
+
+  seasonPointsTable.find('thead tr th span').each((i, el) => {
+    if (i == batterFieldsCount) {
+      isPitchingField = true;
     }
-    if (pitchingNow) {
+    if (isPitchingField) {
       pitcherFields.push(el.innerText);
     } else {
       batterFields.push(el.innerText);
     }
   });
+
+  log.debug('batterFields', batterFields);
+  log.debug('pitcherFields', pitcherFields);
 
   const teamInfo = [];
   const allTeamTotals = [];
@@ -27,20 +48,22 @@ const getTeams = () => {
 
   const inner = (a, b) => { return b.innerText; };
 
-  jQuery('#standingsTable > tbody > tr.tableBody').each((i, el) => {
+  ownerTable.find('div.team__column__content').each((i, el) => {
     // do the team work while we're here
-    const teamFull = jQuery(el).find('a[target=_top]')[0].title;
-    const ownerName = teamFull.match(/\((.+)\)$/)[1];
-    const teamName = teamFull.match(/^(.+)\ (?:\((.+)\))$/)[1];
+    const teamName = jQuery(el).find('a span')[0].title;
+    const ownerName = jQuery(el).find('> span')[0].innerText.match(/\((.+)\)/)[1];
     teamInfo.push({teamName, ownerName});
+  });
 
-    // actual stat work
-    const teamTotals = jQuery(el).find('td[class^=sortableStat]').map(inner).get();
+  seasonPointsTable.find('tbody tr').each((i, el) => {
+    const teamTotals = jQuery(el).find('div.points-by-stat').map(inner).get();
     allTeamTotals.push(teamTotals);
   });
 
-  jQuery('#statsTable > tbody > tr.tableBody').each((i, el) => {
-    const teamStats = jQuery(el).find('td[id^=tm]').map(inner).get();
+  log.debug('allTeamTotals', allTeamTotals);
+
+  seasonStatsTable.find('tbody tr').each((i, el) => {
+    const teamStats = jQuery(el).find('div.stat-value').map(inner).get();
     allTeamStats.push(teamStats);
   });
 
@@ -67,8 +90,8 @@ const getTeams = () => {
 };
 
 const currentView = () => {
-  const isDaily = jQuery('b:contains(Daily Stats)').length > 0;
-  const isRealTime = jQuery('b:contains(Season Stats)').length > 0;
+  const isDaily = jQuery('button.Button--active:contains(Daily Stats)').length > 0;
+  const isRealTime = jQuery('button.Button--active:contains(Season Stats)').length > 0;
   return isDaily ? 'daily' : (isRealTime ? 'realtime' : 'season');
 };
 

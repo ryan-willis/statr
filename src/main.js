@@ -23,7 +23,7 @@ render();
 document.addEventListener('DOMContentLoaded', () => {
   chrome.tabs.query({currentWindow: true, active: true}, tabs => {
     const tab = tabs[0];
-    if (tab.url.indexOf('games.espn.com/flb/standings') !== -1) {
+    if (tab.url.indexOf('fantasy.espn.com/baseball/league/standings') !== -1) {
       chrome.tabs.executeScript(tab.id, {file: 'scripts/content.js'});
     } else {
       console.log('dispatching code...');
